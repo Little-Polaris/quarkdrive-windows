@@ -27,7 +27,7 @@ def configure():
         for key, value in {
             "id": service_id, "name": name, "description": "Local Quark drive; automatic start and failure recovery.",
             "executable": executable, "arguments": arguments, "workingdirectory": r"%BASE%\..\..",
-            "startmode": "Automatic", "delayedAutoStart": "true", "stoptimeout": "30sec",
+            "startmode": "Automatic", "delayedAutoStart": "false", "stoptimeout": "30sec",
             "logpath": r"%BASE%\..\logs", "resetfailure": "1day",
         }.items():
             ET.SubElement(xml, key).text = value
