@@ -12,9 +12,13 @@ if (Get-Service QuarkMount -ErrorAction SilentlyContinue) {
     return
 }
 $taskRuntime = Join-Path $taskRoot 'runtime'
+if (-not $PSBoundParameters.ContainsKey('DriveLetter') -and (Test-Path (Join-Path $taskRuntime 'settings.json'))) {
+    $DriveLetter = (Get-Content (Join-Path $taskRuntime 'settings.json') -Raw | ConvertFrom-Json).drive_letter
+}
+. (Join-Path $PSScriptRoot 'Runtime.ps1')
 $taskOpenList = Join-Path $taskRoot 'bin\openlist\openlist.exe'
 $taskRclone = Join-Path $taskRoot 'bin\rclone\rclone.exe'
-$taskPython = (Get-Command python -ErrorAction Stop).Source
+$taskPython = Get-QuarkPython $taskRoot
 
 function Get-OwnedProcess([string]$PidName, [string]$ExePath) {
     $pidFile = Join-Path $taskRuntime $PidName

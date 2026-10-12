@@ -11,12 +11,23 @@ DIST = ROOT / "dist"
 
 
 def build():
-    files = [ROOT / name for name in ("Install.cmd", "Uninstall.cmd", "README.md", "LICENSE",
+    files = [ROOT / name for name in ("Deploy.ps1", "Install.cmd", "Uninstall.cmd", "README.md", "LICENSE",
                                      "THIRD_PARTY_NOTICES.md", "SECURITY.md", "CHANGELOG.md")]
-    for folder in ("scripts", "docs"):
+    for folder in ("scripts", "docs", "bin"):
         files.extend(p for p in (ROOT / folder).rglob("*") if p.is_file()
-                     and not any(part in p.relative_to(ROOT).parts for part in ("__pycache__", "licenses", "local"))
+                     and not any(part in p.relative_to(ROOT).parts for part in ("__pycache__", "local"))
                      and p.suffix not in (".pyc", ".log"))
+    required = ["bin/openlist/openlist.exe", "bin/rclone/rclone.exe", "bin/winsw/WinSW.exe",
+                "bin/python/python.exe", "bin/installers/winfsp.msi", "bin/python/LICENSE.txt",
+                "bin/sources/OpenList-v4.2.6.tar.gz", "bin/sources/OpenList-Frontend-v4.2.6.tar.gz",
+                "bin/sources/OpenList-v4.2.6-with-dependencies.tar.gz"]
+    for name in required:
+        if not (ROOT / name).is_file():
+            raise RuntimeError(f"Missing bundled component: {name}; run Prepare-Bundle.py first")
+    component_manifest = json.loads((ROOT / "docs/bundle-components.json").read_text())
+    source = component_manifest["generated_source"]
+    if hashlib.sha256((ROOT / source["destination"]).read_bytes()).hexdigest() != source["sha256"]:
+        raise RuntimeError("Corresponding source checksum mismatch")
     manifest = {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}
     DIST.mkdir(exist_ok=True)
     archive = DIST / "QuarkDrive-Windows-x64.zip"
@@ -26,7 +37,7 @@ def build():
         z.writestr("QuarkDrive/docs/package-sha256.json", json.dumps(manifest, indent=2))
     with zipfile.ZipFile(archive) as z:
         assert z.testzip() is None
-        assert not any(any(part in Path(n).parts for part in ("runtime", ".git", "bin", "licenses")) for n in z.namelist())
+        assert not any(any(part in Path(n).parts for part in ("runtime", ".git")) for n in z.namelist())
         assert "QuarkDrive/Install.cmd" in z.namelist()
         for name, expected in manifest.items():
             assert hashlib.sha256(z.read("QuarkDrive/" + name)).hexdigest() == expected, name

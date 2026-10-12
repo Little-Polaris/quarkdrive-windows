@@ -1,0 +1,73 @@
+{
+  "components": [
+    {
+      "destination": "bin/openlist/openlist.exe",
+      "url": "https://github.com/OpenListTeam/OpenList/releases/download/v4.2.6/openlist-windows-amd64.zip",
+      "sha256": "234ee38f142858ba12d57dd57d181c9ed4a77f952b8420c053e7ab98e3db3172",
+      "archive_member": "openlist.exe",
+      "archive_sha256": "10d24913f86843e347eefac219c61224628bbd5d3c7443b2ee119c168a8cb3b9"
+    },
+    {
+      "destination": "bin/rclone/rclone.exe",
+      "url": "https://downloads.rclone.org/v1.75.2/rclone-v1.75.2-windows-amd64.zip",
+      "sha256": "41eab3e118d264920b62c3327966c5ece0dc4dd715ee617d9e30450d8ead95a4",
+      "archive_member": "rclone.exe"
+    },
+    {
+      "destination": "bin/winsw/WinSW.exe",
+      "url": "https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW.NET461.exe",
+      "sha256": "b5066b7bbdfba1293e5d15cda3caaea88fbeab35bd5b38c41c913d492aadfc4f"
+    },
+    {
+      "destination": "bin/installers/winfsp.msi",
+      "url": "https://github.com/winfsp/winfsp/releases/download/v2.1/winfsp-2.1.25156.msi",
+      "sha256": "073a70e00f77423e34bed98b86e600def93393ba5822204fac57a29324db9f7a"
+    },
+    {
+      "destination": "bin/installers/python-3.14.6-embed-amd64.zip",
+      "url": "https://www.python.org/ftp/python/3.14.6/python-3.14.6-embed-amd64.zip",
+      "sha256": "df901e84a896ff1ee720ad03377e0c8d8c2244fda79808aeeaff6316df1cb75c"
+    },
+    {
+      "destination": "bin/licenses/OpenList.txt",
+      "url": "https://raw.githubusercontent.com/OpenListTeam/OpenList/v4.2.6/LICENSE",
+      "sha256": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+    },
+    {
+      "destination": "bin/licenses/OpenList-Frontend.txt",
+      "url": "https://raw.githubusercontent.com/OpenListTeam/OpenList-Frontend/v4.2.6/LICENSE",
+      "sha256": "584ee10e15ea2aea53397728b21378d094204a2880db4558ba8238705fc0d527"
+    },
+    {
+      "destination": "bin/licenses/Rclone.txt",
+      "url": "https://raw.githubusercontent.com/rclone/rclone/v1.75.2/COPYING",
+      "sha256": "8cd2e9e750b90a04b7d82dbbca3930c696ae0309d7c10464f90a44f45754cd04"
+    },
+    {
+      "destination": "bin/licenses/WinSW.txt",
+      "url": "https://raw.githubusercontent.com/winsw/winsw/v2.12.0/LICENSE.txt",
+      "sha256": "1cdf703c10a70e5973bf3acf2a5eeabe7746237155b92db2034aeae26fdf7802"
+    },
+    {
+      "destination": "bin/licenses/WinFsp.txt",
+      "url": "https://raw.githubusercontent.com/winfsp/winfsp/v2.1/License.txt",
+      "sha256": "68ae2fa9d8e6110ebdc9a236beecf118e279f8a26530daf09c9e682c231f7879"
+    },
+    {
+      "destination": "bin/sources/OpenList-v4.2.6.tar.gz",
+      "url": "https://codeload.github.com/OpenListTeam/OpenList/tar.gz/refs/tags/v4.2.6",
+      "sha256": "028694b14ba7368429774f33c1b7eb584b2bf6235fb7d72df371e528a5c6b04c"
+    },
+    {
+      "destination": "bin/sources/OpenList-Frontend-v4.2.6.tar.gz",
+      "url": "https://codeload.github.com/OpenListTeam/OpenList-Frontend/tar.gz/refs/tags/v4.2.6",
+      "sha256": "fa613bd495cd7708c22a3c511145e5a517c920eb6067513c74762ca15dfa0f3a"
+    }
+  ],
+  "python_path_configuration": "python314._pth enables ../../scripts for local project modules",
+  "generated_source": {
+    "destination": "bin/sources/OpenList-v4.2.6-with-dependencies.tar.gz",
+    "sha256": "24f8727941ddaa4e388ef7fdfaefe94e2d0ef9710598cd12494f16b8e5260e07",
+    "method": "Upstream v4.2.6 source plus go mod vendor using locked go.sum dependencies"
+  }
+}

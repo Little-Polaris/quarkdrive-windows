@@ -4,13 +4,17 @@ param([switch]$ManualOnly)
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskRuntime = Join-Path $taskRoot 'runtime'
+. (Join-Path $PSScriptRoot 'Runtime.ps1')
 if (-not $ManualOnly -and (Get-Service QuarkMount -ErrorAction SilentlyContinue)) {
     & (Join-Path $PSScriptRoot 'Manage-Services.ps1') -Action Stop
     return
 }
+Get-ChildItem (Join-Path $taskRuntime 'cache\vfsMeta') -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+    if ((Get-Content $_.FullName -Raw | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before stopping the mount.' }
+}
 foreach ($entry in @(
     @{ PidFile = 'rclone.pid'; Exe = (Join-Path $taskRoot 'bin\rclone\rclone.exe') },
-    @{ PidFile = 'quota.pid'; Exe = (Get-Command python -ErrorAction Stop).Source },
+    @{ PidFile = 'quota.pid'; Exe = (Get-QuarkPython $taskRoot) },
     @{ PidFile = 'openlist.pid'; Exe = (Join-Path $taskRoot 'bin\openlist\openlist.exe') }
 )) {
     $taskPidFile = Join-Path $taskRuntime $entry.PidFile

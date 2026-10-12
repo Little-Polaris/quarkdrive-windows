@@ -20,16 +20,24 @@
 适用 64 位 Windows 10 / 11。使用 Windows 自带 PowerShell 5.1；不需要额外 pip 包。
 
 1. 从仓库的 **Releases** 下载 `QuarkDrive-Windows-x64.zip`，完整解压到本机固定目录。
-2. 按 [软件清单](docs/dependencies.md) 安装 Python、WinFsp，并准备 OpenList、Rclone、WinSW。
-3. 双击 `Install.cmd`，选择盘符，按向导填写自己的夸克 Cookie。
+2. 双击 `Install.cmd`，或运行下面的 PowerShell 命令。
+3. 选择盘符，按向导填写自己的夸克 Cookie。
 4. 批准 Windows 管理员授权提示。安装完成后打开资源管理器“此电脑”。
 
-安装包只包含本项目的脚本和说明。程序依赖需自行下载，账户在本机单独配置。
+```powershell
+powershell -NoProfile -STA -ExecutionPolicy Bypass -File .\Deploy.ps1
+```
+
+Release 包已包含 OpenList、Rclone、WinSW、Python 运行环境和 WinFsp 安装器，不需要逐个下载或配置 PATH。
+部署脚本自动安装缺少的 WinFsp、初始化账户和注册服务。账户在本机单独配置。
+向导中的“注册为 Windows 服务，开机自动启动”可以自行勾选；不勾选则以普通后台进程运行，之后用启动、停止脚本控制。
+命令行添加 `-Portable` 可预选手动模式。手动模式从普通权限的 PowerShell 启动，安装驱动时会单独请求管理员授权。
+Windows 若提示驱动安装需要重启，重启后再运行同一部署脚本即可继续。
 详细步骤见 [迁移安装](docs/迁移安装.md)。
 
 ## 使用
 
-开机后由 Windows 自动启动服务；联网和账户验证完成后盘符可用。
+选择服务模式时，开机后由 Windows 自动启动服务；联网和账户验证完成后盘符可用。
 
 | 服务 | 用途 |
 | --- | --- |
@@ -45,6 +53,7 @@ Cookie 更新位置为 OpenList 的“存储 → /Quark”。
 
 文件关闭后从缓存上传；停止服务或关机前等待上传完成。缓存目标上限为 2 GB，打开的大文件可能超过该值。
 Windows 服务以 LocalSystem 运行，盘符对本机登录用户开放读写，适合自己的 Windows 设备。
+手动模式的盘符由当前用户进程挂载；退出 Windows 后，下次使用时运行 `scripts/Start-Quark.ps1`。从服务模式切换到手动模式时，先运行 `Uninstall.cmd` 移除服务，再重新运行部署向导并取消服务选项。
 
 ## 目录
 
@@ -53,18 +62,22 @@ Install.cmd          安装入口
 Uninstall.cmd        卸载入口
 scripts/             安装、挂载、容量适配与验证
 docs/                依赖清单、使用说明和验证记录
-bin/                 用户自行准备的程序，排除在 Git 和发布包之外
+bin/                 随 Release 附带的程序、运行环境、许可和源码，排除在 Git 之外
 runtime/             本机配置、账户、数据库、日志和缓存，排除在 Git 和发布包之外
 dist/                本地生成的发布包，排除在 Git 之外
 ```
 
 ## 构建发布包
 
+维护者从源码打包时需要 Python 和 Go 1.27，用于准备程序及对应的依赖源码，然后执行：
+
 ```powershell
+python scripts/Prepare-Bundle.py
 python scripts/Build-Package.py
 ```
 
 生成 ZIP 和 SHA-256 校验文件。打包使用明确的文件范围，逐文件核对校验值，不读取运行目录。
+组件下载固定版本并检查 SHA-256；准备时可使用 `--proxy http://127.0.0.1:7890`。
 源代码可从仓库及 GitHub 自动生成的源码归档取得。
 
 实测覆盖读写、云端内容核对、服务重启、故障恢复及空白数据库初始化，见 [验证记录](docs/验证记录.md)。

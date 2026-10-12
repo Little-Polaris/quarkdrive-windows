@@ -1,6 +1,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # Copyright (C) 2026 Little-Polaris
 $ErrorActionPreference = 'Stop'
+$taskRoot = Split-Path $PSScriptRoot -Parent
+if (-not (Get-Service QuarkMount,QuarkQuota,QuarkOpenList -ErrorAction SilentlyContinue)) {
+    & (Join-Path $PSScriptRoot 'Stop-Quark.ps1') -ManualOnly
+    Write-Host 'Manual mount stopped. Local configuration and cache have been retained.'
+    return
+}
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     $process = Start-Process "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" -Verb RunAs -WindowStyle Hidden `

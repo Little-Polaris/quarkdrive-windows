@@ -1,6 +1,7 @@
 # 第三方组件与许可
 
-本仓库与轻量发布包只分发本项目脚本、安装入口和文档。下列程序由用户从各官方项目单独获取，本项目通过独立进程或本地 HTTP / WebDAV 与其通信，不修改其程序文件。
+Git 仓库保存本项目脚本、安装入口和文档。完整 Release 包附带下列固定版本的官方程序、许可证和源码归档，本项目通过独立进程或本地 HTTP / WebDAV 与其通信。
+程序二进制保持官方原样；Python 的 `python314._pth` 配置增加本项目脚本目录以加载本地模块。
 
 本项目自身采用 GNU AGPL-3.0-only。该许可不替换第三方组件的许可，也不授予云盘平台的商标、服务或账户权利。
 
@@ -16,6 +17,9 @@
 WinFsp - Windows File System Proxy, Copyright (C) Bill Zissimopoulos.
 项目地址：<https://github.com/winfsp/winfsp>。
 
+许可全文位于 `bin/licenses/`，Python 及其内置组件许可位于 `bin/python/LICENSE.txt`。
+OpenList 及其前端的对应版本源码、构建脚本和依赖锁定文件位于 `bin/sources/` 的上游源码归档中；构建说明见 `docs/源码与构建.md`。
+组件原始地址及校验值在 `docs/bundle-components.json`，发布包内各文件校验值在 `docs/package-sha256.json`。
 若自行修改或重新分发第三方程序，请遵循对应上游的许可、版权声明及源码提供要求。Windows、PowerShell 和 .NET Framework 由 Windows 安装环境提供，不包含在发布包中。
 
 依赖的开源许可与云盘平台的服务协议各有适用范围。使用夸克网盘应遵守其[服务协议](https://terms.alicdn.com/legal-agreement/terms/b_end_product_protocol/20230516173016165/20230516173016165.html)及账户权益。
