@@ -28,9 +28,9 @@ def get_quota():
     with quota_lock:
         if quota_cache is not None and time.monotonic() - quota_time < 60:
             return quota_cache
-        token = (RUNTIME / "admin-token.txt").read_text().strip()
+        token = (RUNTIME / "admin-token.txt").read_text(encoding="utf-8-sig").strip()
         settings_file = RUNTIME / "settings.json"
-        storage_id = json.loads(settings_file.read_text())["storage_id"] if settings_file.exists() else 2
+        storage_id = json.loads(settings_file.read_text(encoding="utf-8-sig"))["storage_id"] if settings_file.exists() else 2
         request = urllib.request.Request(
             OPENLIST + f"/api/admin/storage/get?id={storage_id}", headers={"Authorization": token}
         )
@@ -39,7 +39,7 @@ def get_quota():
         if storage["code"] == 401:
             request = urllib.request.Request(
                 OPENLIST + "/api/auth/login",
-                data=json.dumps({"username": "admin", "password": (RUNTIME / "admin-password.txt").read_text().strip()}).encode(),
+                data=json.dumps({"username": "admin", "password": (RUNTIME / "admin-password.txt").read_text(encoding="utf-8-sig").strip()}).encode(),
                 headers={"Content-Type": "application/json"},
             )
             with local_http.open(request, timeout=5) as response:
@@ -112,7 +112,7 @@ class Handler(BaseHTTPRequestHandler):
         if path != "/dav" and not path.startswith("/dav/"):
             self.send_body(404, b"Not found", "text/plain")
             return
-        account = json.loads((RUNTIME / "webdav-account.json").read_text())
+        account = json.loads((RUNTIME / "webdav-account.json").read_text(encoding="utf-8-sig"))
         expected = "Basic " + base64.b64encode(
             (account["username"] + ":" + account["password"]).encode()
         ).decode()

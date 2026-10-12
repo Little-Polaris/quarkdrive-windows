@@ -13,7 +13,7 @@ if (Get-Service QuarkMount -ErrorAction SilentlyContinue) {
 }
 $taskRuntime = Join-Path $taskRoot 'runtime'
 if (-not $PSBoundParameters.ContainsKey('DriveLetter') -and (Test-Path (Join-Path $taskRuntime 'settings.json'))) {
-    $DriveLetter = (Get-Content (Join-Path $taskRuntime 'settings.json') -Raw | ConvertFrom-Json).drive_letter
+    $DriveLetter = (Get-Content (Join-Path $taskRuntime 'settings.json') -Raw -Encoding UTF8 | ConvertFrom-Json).drive_letter
 }
 . (Join-Path $PSScriptRoot 'Runtime.ps1')
 $taskOpenList = Join-Path $taskRoot 'bin\openlist\openlist.exe'

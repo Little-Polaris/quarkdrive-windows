@@ -53,7 +53,7 @@ try {
     }
     # Refuse to interrupt cached files that have not reached the cloud.
     Get-ChildItem (Join-Path $taskRuntime 'cache\vfsMeta') -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-        if ((Get-Content $_.FullName -Raw | ConvertFrom-Json).Dirty) {
+        if ((Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json).Dirty) {
             throw 'Pending uploads exist. Close files and wait for upload completion before installing.'
         }
     }
@@ -72,8 +72,15 @@ try {
     if ($Portable) {
         & (Join-Path $PSScriptRoot 'Start-Quark.ps1') -DriveLetter $DriveLetter
     } else {
-        & $python (Join-Path $PSScriptRoot 'Configure-Services.py')
-        if ($LASTEXITCODE -ne 0) { throw 'Service configuration failed.' }
+        $configurationLog = Join-Path $taskRuntime 'logs\service-configuration.log'
+        $configurationOutput = Join-Path $taskRuntime 'logs\service-configuration-output.log'
+        $configurationProcess = Start-Process -FilePath $python `
+            -ArgumentList ('-X utf8=1 "' + (Join-Path $PSScriptRoot 'Configure-Services.py') + '"') `
+            -WorkingDirectory $taskRoot -WindowStyle Hidden -Wait -PassThru `
+            -RedirectStandardError $configurationLog -RedirectStandardOutput $configurationOutput
+        if ($configurationProcess.ExitCode -ne 0) {
+            throw "Service configuration failed (exit $($configurationProcess.ExitCode)). Details: runtime/logs/service-configuration.log"
+        }
         foreach ($name in $serviceNames) {
             $wrapper = Join-Path $taskRuntime "services\$name.exe"
             if (Get-Service $name -ErrorAction SilentlyContinue) { & $wrapper refresh }

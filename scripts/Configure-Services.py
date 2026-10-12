@@ -12,7 +12,7 @@ SERVICES = ROOT / "runtime/services"
 
 def configure():
     SERVICES.mkdir(parents=True, exist_ok=True)
-    apps = json.loads((ROOT / "runtime/settings.json").read_text())["applications"]
+    apps = json.loads((ROOT / "runtime/settings.json").read_text(encoding="utf-8-sig"))["applications"]
     specs = [
         ("QuarkOpenList", "Quark - OpenList", apps["openlist"],
          r'server --data "%BASE%\..\data"', []),

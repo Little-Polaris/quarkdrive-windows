@@ -19,7 +19,7 @@ foreach ($name in @('QuarkOpenList','QuarkQuota','QuarkMount')) {
 }
 if ($Action -in @('Stop','Restart')) {
     Get-ChildItem (Join-Path $taskRuntime 'cache\vfsMeta') -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-        if ((Get-Content $_.FullName -Raw | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before stopping services.' }
+        if ((Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before stopping services.' }
     }
     foreach ($name in @('QuarkMount','QuarkQuota','QuarkOpenList')) { Stop-Service $name }
 }

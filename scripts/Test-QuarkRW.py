@@ -14,12 +14,12 @@ import uuid
 root = Path(__file__).resolve().parent.parent
 runtime = root / "runtime"
 base = "http://127.0.0.1:5244"
-token = (runtime / "admin-token.txt").read_text().strip()
+token = (runtime / "admin-token.txt").read_text(encoding="utf-8-sig").strip()
 http = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 settings_file = runtime / "settings.json"
-drive_letter = json.loads(settings_file.read_text())["drive_letter"] if settings_file.exists() else "Q"
+drive_letter = json.loads(settings_file.read_text(encoding="utf-8-sig"))["drive_letter"] if settings_file.exists() else "Q"
 drive_root = Path(drive_letter + ":/")
-account = json.loads((runtime / "webdav-account.json").read_text())
+account = json.loads((runtime / "webdav-account.json").read_text(encoding="utf-8-sig"))
 basic = base64.b64encode(
     (account["username"] + ":" + account["password"]).encode()
 ).decode()
@@ -40,7 +40,7 @@ def cloud_list(path):
     response = json.load(http.open(request, timeout=15))
     if response["code"] == 401:
         login_request = urllib.request.Request(base + "/api/auth/login", data=json.dumps({"username": "admin",
-            "password": (runtime / "admin-password.txt").read_text().strip()}).encode(),
+            "password": (runtime / "admin-password.txt").read_text(encoding="utf-8-sig").strip()}).encode(),
             headers={"Content-Type": "application/json"})
         login = json.load(http.open(login_request, timeout=15))
         if login["code"] != 200:

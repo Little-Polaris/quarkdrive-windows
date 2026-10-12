@@ -76,7 +76,7 @@ try {
     Start-Process explorer.exe -ArgumentList 'shell:MyComputerFolder'
 } catch {
     $result = Join-Path $taskRuntime 'install-result.json'
-    $message = if (Test-Path $result) { (Get-Content $result -Raw | ConvertFrom-Json).error } else { $_.Exception.Message }
+    $message = if (Test-Path $result) { (Get-Content $result -Raw -Encoding UTF8 | ConvertFrom-Json).error } else { $_.Exception.Message }
     [void][Windows.Forms.MessageBox]::Show($message, '安装失败')
 } finally {
     Remove-Item -LiteralPath $cookiePath -ErrorAction SilentlyContinue

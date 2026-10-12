@@ -10,7 +10,7 @@ if (-not $ManualOnly -and (Get-Service QuarkMount -ErrorAction SilentlyContinue)
     return
 }
 Get-ChildItem (Join-Path $taskRuntime 'cache\vfsMeta') -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-    if ((Get-Content $_.FullName -Raw | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before stopping the mount.' }
+    if ((Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before stopping the mount.' }
 }
 foreach ($entry in @(
     @{ PidFile = 'rclone.pid'; Exe = (Join-Path $taskRoot 'bin\rclone\rclone.exe') },

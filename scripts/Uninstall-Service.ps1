@@ -17,7 +17,7 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskRuntime = Join-Path $taskRoot 'runtime'
 Get-ChildItem (Join-Path $taskRuntime 'cache\vfsMeta') -File -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-    if ((Get-Content $_.FullName -Raw | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before uninstalling.' }
+    if ((Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json).Dirty) { throw 'Wait for pending uploads before uninstalling.' }
 }
 foreach ($name in @('QuarkMount','QuarkQuota','QuarkOpenList')) {
     $service = Get-CimInstance Win32_Service -Filter "Name='$name'"

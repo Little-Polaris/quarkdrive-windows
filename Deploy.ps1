@@ -24,7 +24,7 @@ if ($CookieFile) {
     New-Item -ItemType Directory -Force $runtime | Out-Null
     $copy = Join-Path $runtime ('deployment-cookie-' + [Guid]::NewGuid().ToString('N') + '.txt')
     # Retain the caller's input file; only consume the internal copy.
-    [IO.File]::WriteAllText($copy, (Get-Content -LiteralPath $CookieFile -Raw), (New-Object Text.UTF8Encoding($false)))
+    [IO.File]::WriteAllText($copy, (Get-Content -LiteralPath $CookieFile -Raw -Encoding UTF8), (New-Object Text.UTF8Encoding($false)))
     try {
         & (Join-Path $taskRoot 'scripts\Install-Service.ps1') -DriveLetter $DriveLetter -CookieFile $copy -Portable:$Portable
         Write-Host "Deployment completed. Open This PC to use ${DriveLetter}:."

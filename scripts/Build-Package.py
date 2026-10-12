@@ -24,7 +24,7 @@ def build():
     for name in required:
         if not (ROOT / name).is_file():
             raise RuntimeError(f"Missing bundled component: {name}; run Prepare-Bundle.py first")
-    component_manifest = json.loads((ROOT / "docs/bundle-components.json").read_text())
+    component_manifest = json.loads((ROOT / "docs/bundle-components.json").read_text(encoding="utf-8-sig"))
     source = component_manifest["generated_source"]
     if hashlib.sha256((ROOT / source["destination"]).read_bytes()).hexdigest() != source["sha256"]:
         raise RuntimeError("Corresponding source checksum mismatch")
@@ -43,8 +43,19 @@ def build():
             assert hashlib.sha256(z.read("QuarkDrive/" + name)).hexdigest() == expected, name
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (DIST / "QuarkDrive-Windows-x64.sha256.txt").write_text(f"{digest}  {archive.name}\n", encoding="utf-8")
+    update = DIST / "QuarkDrive-v0.2.1-update.zip"
+    source_files = [path for path in files if path.relative_to(ROOT).parts[0] != "bin"]
+    with zipfile.ZipFile(update, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as z:
+        for path in sorted(source_files):
+            z.write(path, path.relative_to(ROOT).as_posix())
+    with zipfile.ZipFile(update) as z:
+        assert z.testzip() is None
+        assert not any(any(part in Path(name).parts for part in ("bin", "runtime", ".git")) for name in z.namelist())
+    update_digest = hashlib.sha256(update.read_bytes()).hexdigest()
+    (DIST / "QuarkDrive-v0.2.1-update.sha256.txt").write_text(f"{update_digest}  {update.name}\n", encoding="utf-8")
     print(json.dumps({"archive": str(archive), "bytes": archive.stat().st_size,
-                      "files": len(manifest), "sha256": digest, "runtime_excluded": True}, indent=2))
+                      "files": len(manifest), "sha256": digest, "runtime_excluded": True,
+                      "update_archive": str(update), "update_bytes": update.stat().st_size}, indent=2))
 
 
 if __name__ == "__main__":

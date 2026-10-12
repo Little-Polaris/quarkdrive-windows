@@ -35,6 +35,11 @@ Release 包已包含 OpenList、Rclone、WinSW、Python 运行环境和 WinFsp �
 Windows 若提示驱动安装需要重启，重启后再运行同一部署脚本即可继续。
 详细步骤见 [迁移安装](docs/迁移安装.md)。
 
+### 更新现有安装
+
+v0.2.1 修复了中文路径下的配置读取问题。已经解压 v0.2.0 的用户可下载 `QuarkDrive-v0.2.1-update.zip`，直接解压到现有安装目录并覆盖同名脚本，再运行 `Install.cmd`。更新包不包含 `bin/` 或 `runtime/`，保留原程序和账户配置。
+若服务配置仍失败，具体日志在 `runtime/logs/service-configuration.log`。
+
 ## 使用
 
 选择服务模式时，开机后由 Windows 自动启动服务；联网和账户验证完成后盘符可用。

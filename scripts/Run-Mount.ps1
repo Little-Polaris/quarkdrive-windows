@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskRuntime = Join-Path $taskRoot 'runtime'
-$settings = Get-Content (Join-Path $taskRuntime 'settings.json') -Raw | ConvertFrom-Json
+$settings = Get-Content (Join-Path $taskRuntime 'settings.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $drive = $settings.drive_letter + ':'
 $rclone = $settings.applications.rclone
 # Wait for the local services and the online account before publishing capacity.

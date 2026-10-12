@@ -57,7 +57,7 @@ def initialize(drive, cookie_file):
         subprocess.run([str(exe), "admin", "set", password, "--data", str(RUNTIME / "data")],
                        cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     else:
-        password = (RUNTIME / "admin-password.txt").read_text().strip()
+        password = (RUNTIME / "admin-password.txt").read_text(encoding="utf-8-sig").strip()
         config = json.loads((RUNTIME / "data/config.json").read_text(encoding="utf-8-sig"))
         config["database"]["db_file"] = str(RUNTIME / "data/data.db")
         config["scheme"].update(address="127.0.0.1", http_port=5244, https_port=-1)
@@ -103,7 +103,7 @@ def initialize(drive, cookie_file):
             # A non-working account must never be reported as installed successfully.
             api("/api/fs/list", {"path": "/Quark", "page": 1, "per_page": 1, "refresh": True}, token)
             if (RUNTIME / "webdav-account.json").exists():
-                account = json.loads((RUNTIME / "webdav-account.json").read_text())
+                account = json.loads((RUNTIME / "webdav-account.json").read_text(encoding="utf-8-sig"))
             else:
                 account = {"username": "quark_mount", "password": secrets.token_urlsafe(24)}
                 write_json(RUNTIME / "webdav-account.json", account)
